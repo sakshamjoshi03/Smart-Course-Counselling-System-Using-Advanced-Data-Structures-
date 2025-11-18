@@ -1,0 +1,304 @@
+
+index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Course Counselling System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Header -->
+<header class="header" id="header">
+    <h1>📚 Smart Course Counselling System</h1>
+    <div class="header-right">
+        <span id="userRoleDisplay" class="role-badge"></span>
+        <button id="logoutBtn" class="logout-btn" style="display:none;">Logout</button>
+    </div>
+</header>
+
+<!-- LOGIN PAGE -->
+<div id="loginPage" class="page">
+    <div class="login-container">
+        <h1>Welcome to Smart Course Counselling System</h1>
+        <p>Choose your role to get started</p>
+        <div class="login-options">
+            <button class="login-btn admin-login" onclick="loginAsRole('admin')">
+                <span class="icon">👨‍💼</span>
+                <span>Login as Admin</span>
+            </button>
+            <button class="login-btn student-login" onclick="loginAsRole('student')">
+                <span class="icon">👨‍🎓</span>
+                <span>Login as Student</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ADMIN DASHBOARD -->
+<div id="adminDashboard" class="page" style="display:none;">
+    <div class="dashboard-container">
+        <h2>Admin Dashboard</h2>
+        
+        <!-- Quick Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3 id="totalCourses">0</h3>
+                <p>Total Courses</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="totalStudents">0</h3>
+                <p>Total Students</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="totalEnrollments">0</h3>
+                <p>Total Enrollments</p>
+            </div>
+        </div>
+
+        <!-- Admin Navigation -->
+        <div class="admin-nav">
+            <button class="nav-btn active" onclick="showAdminSection('courseManagement')">📖 Course Management</button>
+            <button class="nav-btn" onclick="showAdminSection('studentManagement')">👥 Student Management</button>
+            <button class="nav-btn" onclick="showAdminSection('prerequisites')">🔗 Prerequisites Setup</button>
+            <button class="nav-btn" onclick="showAdminSection('analytics')">📊 Analytics</button>
+        </div>
+
+        <!-- COURSE MANAGEMENT -->
+        <div id="courseManagement" class="admin-section" style="display:block;">
+            <h3>Manage Courses</h3>
+            <div class="form-container">
+                <h4>Add New Course</h4>
+                <input type="text" id="courseCode" placeholder="Course Code (e.g., CS101)">
+                <input type="text" id="courseName" placeholder="Course Name">
+                <select id="courseDuration">
+                    <option value="">Select Duration</option>
+                    <option value="3 months">3 months</option>
+                    <option value="6 months">6 months</option>
+                    <option value="1 year">1 year</option>
+                    <option value="2 years">2 years</option>
+                    <option value="3 years">3 years</option>
+                    <option value="4 years">4 years</option>
+                </select>
+                <textarea id="courseDesc" placeholder="Course Description"></textarea>
+                <input type="number" id="courseCapacity" placeholder="Course Capacity" value="50">
+                <button onclick="addCourse()" class="btn-primary">Add Course</button>
+            </div>
+            <div class="courses-table-container">
+                <h4>All Courses</h4>
+                <table class="courses-table">
+                    <thead>
+                        <tr>
+                            <th>Course Code</th>
+                            <th>Course Name</th>
+                            <th>Duration</th>
+                            <th>Capacity</th>
+                            <th>Enrolled</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="coursesTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- STUDENT MANAGEMENT -->
+        <div id="studentManagement" class="admin-section" style="display:none;">
+            <h3>Manage Students</h3>
+            <div class="students-table-container">
+                <h4>All Students</h4>
+                <table class="students-table">
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Courses Enrolled</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentsTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- PREREQUISITES SETUP -->
+        <div id="prerequisites" class="admin-section" style="display:none;">
+            <h3>Setup Course Prerequisites</h3>
+            <div class="form-container">
+                <h4>Add Prerequisite</h4>
+                <select id="prerequisiteFrom" placeholder="Select Course">
+                    <option value="">Course to Complete First</option>
+                </select>
+                <select id="prerequisiteTo" placeholder="Select Next Course">
+                    <option value="">Next Recommended Course</option>
+                </select>
+                <button onclick="addPrerequisite()" class="btn-primary">Add Prerequisite</button>
+            </div>
+            <div class="prerequisites-list">
+                <h4>Prerequisite Relationships</h4>
+                <div id="prerequisitesDisplay"></div>
+            </div>
+        </div>
+
+        <!-- ANALYTICS -->
+        <div id="analytics" class="admin-section" style="display:none;">
+            <h3>Analytics & Reports</h3>
+            <div class="analytics-grid">
+                <div class="analytics-card">
+                    <h4>Most Popular Courses</h4>
+                    <div id="popularCourses" class="analytics-content"></div>
+                </div>
+                <div class="analytics-card">
+                    <h4>Student Enrollment Status</h4>
+                    <div id="enrollmentStatus" class="analytics-content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- STUDENT DASHBOARD -->
+<div id="studentDashboard" class="page" style="display:none;">
+    <div class="dashboard-container">
+        <h2>Student Dashboard</h2>
+
+        <!-- Student Profile Setup (First Time) -->
+        <div id="profileSetup" class="profile-section">
+            <h3>Complete Your Profile</h3>
+            <div class="form-container">
+                <input type="text" id="studentName" placeholder="Full Name">
+                <input type="text" id="studentEnrollmentId" placeholder="Enrollment ID">
+                <input type="email" id="studentEmail" placeholder="Email Address">
+                <input type="text" id="studentPhoto" placeholder="Photo URL (optional)">
+                <button onclick="saveStudentProfile()" class="btn-primary">Save Profile</button>
+            </div>
+        </div>
+
+        <!-- Student Profile Display -->
+        <div id="profileDisplay" class="profile-section" style="display:none;">
+            <div class="student-profile-card">
+                <img id="profilePhoto" src="https://via.placeholder.com/100" alt="Student">
+                <div class="profile-info">
+                    <h3 id="displayStudentName"></h3>
+                    <p id="displayEnrollmentId"></p>
+                    <p id="displayStudentEmail"></p>
+                </div>
+                <button onclick="editStudentProfile()" class="btn-secondary">Edit Profile</button>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3 id="enrolledCount">0</h3>
+                <p>Courses Enrolled</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="recommendedCount">0</h3>
+                <p>Recommended Courses</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="availableSeats">0</h3>
+                <p>Available Seats</p>
+            </div>
+        </div>
+
+        <!-- Student Navigation -->
+        <div class="student-nav">
+            <button class="nav-btn active" onclick="showStudentSection('browseCourses')">🔍 Browse Courses</button>
+            <button class="nav-btn" onclick="showStudentSection('selectedCourses')">✓ My Selected Courses</button>
+            <button class="nav-btn" onclick="showStudentSection('recommendations')">💡 Recommendations</button>
+            <button class="nav-btn" onclick="showStudentSection('searchCourses')">🔎 Search Courses</button>
+        </div>
+
+        <!-- BROWSE COURSES -->
+        <div id="browseCourses" class="student-section" style="display:block;">
+            <h3>Browse Available Courses</h3>
+            <div class="filter-container">
+                <input type="text" id="courseFilter" placeholder="Search by code or name" onkeyup="filterCourses()">
+                <select id="durationFilter" onchange="filterCourses()">
+                    <option value="">All Durations</option>
+                    <option value="3 months">3 months</option>
+                    <option value="6 months">6 months</option>
+                    <option value="1 year">1 year</option>
+                    <option value="2 years">2 years</option>
+                    <option value="3 years">3 years</option>
+                    <option value="4 years">4 years</option>
+                </select>
+            </div>
+            <div class="courses-grid" id="coursesGrid">
+            </div>
+        </div>
+
+        <!-- SELECTED COURSES -->
+        <div id="selectedCourses" class="student-section" style="display:none;">
+            <h3>My Selected Courses</h3>
+            <div class="selected-courses-container">
+                <table class="selected-table">
+                    <thead>
+                        <tr>
+                            <th>Course Code</th>
+                            <th>Course Name</th>
+                            <th>Duration</th>
+                            <th>Prerequisites Met</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="selectedCoursesBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- RECOMMENDATIONS -->
+        <div id="recommendations" class="student-section" style="display:none;">
+            <h3>Recommended Courses</h3>
+            <div class="recommendations-container">
+                <div class="rec-section">
+                    <h4>🎯 Based on Your Selections</h4>
+                    <div id="basedrec" class="rec-grid">
+                    </div>
+                </div>
+                <div class="rec-section">
+                    <h4>🔥 Popular Courses</h4>
+                    <div id="popularrec" class="rec-grid">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEARCH COURSES -->
+        <div id="searchCourses" class="student-section" style="display:none;">
+            <h3>Search Courses</h3>
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search courses..." onkeyup="performSearch()">
+                <div id="searchResults" class="search-results">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Course Details Modal -->
+<div id="courseModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2 id="modalCourseName"></h2>
+        <div id="modalCourseDetails">
+        </div>
+        <button onclick="selectCourseFromModal()" class="btn-primary" id="selectBtn">Select Course</button>
+    </div>
+</div>
+
+<!-- Notification -->
+<div id="notification" class="notification"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
