@@ -17,9 +17,7 @@ function initializeData() {
         { code: 'CS104', name: 'Web Development', duration: '3 months', description: 'Build web applications with HTML, CSS, and JavaScript', capacity: 60, enrolled: 45 },
         { code: 'CS105', name: 'Database Management', duration: '3 months', description: 'Design and manage databases using SQL and SQLite', capacity: 40, enrolled: 18 },
         { code: 'CS106', name: 'Machine Learning', duration: '1 year', description: 'Introduction to ML algorithms and Python', capacity: 35, enrolled: 20 },
-        { code: 'CS107', name: 'Artificial Intelligence', duration: '1 year', description: 'AI fundamentals, search, and decision making', capacity: 30, enrolled: 15 },
-        { code: 'CS108', name: 'Web Technologies', duration: '6 months', description: 'Advanced web development with frameworks', capacity: 50, enrolled: 32 }
-    ];
+        ];
 
     students = [
         { id: 'STU001', name: 'Aarjav Patel', email: 'aarjav@college.edu', selectedCourses: ['CS101', 'CS104'], status: 'Active' },
@@ -658,3 +656,4 @@ window.addEventListener('load', () => {
         }
     }
 });
+
